@@ -1,20 +1,68 @@
 [
   {
-    "title": "サンプル曲 1",
-    "artist": "アーティスト名",
+    "title": "San_Set 1",
+    "artist": "freyer",
     "file": "music/song1.mp3",
     "favorite": false
   },
   {
-    "title": "サンプル曲 2",
-    "artist": "アーティスト名",
+    "title": "Afternoon time in the fields 2",
+    "artist": "freyer",
     "file": "music/song2.mp3",
     "favorite": false
   },
   {
-    "title": "サンプル曲 3",
-    "artist": "アーティスト名",
+    "title": "Vitamin Highway 3",
+    "artist": "freyer",
     "file": "music/song3.mp3",
+    "favorite": true
+  }
+  {
+    "title": "Ultramarine Resonance 4",
+    "artist": "freyer",
+    "file": "music/song4.mp3",
+    "favorite": true
+  }
+  {
+    "title": "A dramatic comeback 5",
+    "artist": "freyer",
+    "file": "music/song5.mp3",
+    "favorite": true
+  }
+  {
+    "title": "The light of the margins 6",
+    "artist": "freyer",
+    "file": "music/song6.mp3",
+    "favorite": true
+  }
+  {
+    "title": "Small chair 7",
+    "artist": "freyer",
+    "file": "music/song7.mp3",
+    "favorite": true
+  }
+  {
+    "title": "The Prayer of the Seed 8",
+    "artist": "freyer",
+    "file": "music/song8.mp3",
+    "favorite": true
+  }
+  {
+    "title": "Dreaming Seeds 9",
+    "artist": "freyer",
+    "file": "music/song9.mp3",
+    "favorite": true
+  }
+  {
+    "title": "Horizon 10",
+    "artist": "freyer",
+    "file": "music/song10.mp3",
+    "favorite": true
+  }
+  {
+    "title": "The Comet's Journey 11",
+    "artist": "freyer",
+    "file": "music/song11.mp3",
     "favorite": true
   }
 ]

@@ -1,0 +1,20 @@
+[
+  {
+    "title": "サンプル曲 1",
+    "artist": "アーティスト名",
+    "file": "music/song1.mp3",
+    "favorite": false
+  },
+  {
+    "title": "サンプル曲 2",
+    "artist": "アーティスト名",
+    "file": "music/song2.mp3",
+    "favorite": false
+  },
+  {
+    "title": "サンプル曲 3",
+    "artist": "アーティスト名",
+    "file": "music/song3.mp3",
+    "favorite": true
+  }
+]

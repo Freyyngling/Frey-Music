@@ -31,8 +31,10 @@
   /* ── 背景動画 ── */
   #bg-video {
     position: fixed;
-    inset: 0;
-    width: 100%; height: 100%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%; min-height: 100%;
+    width: auto; height: auto;
     object-fit: cover;
     z-index: 0;
     opacity: 0.45;
@@ -151,30 +153,46 @@
 
   input[type=range] {
     -webkit-appearance: none;
+    appearance: none;
     width: 100%;
+    height: 20px;
+    background: transparent;
+    outline: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    display: block;
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(to right, var(--accent1) var(--prog, 0%), rgba(255,255,255,0.12) var(--prog, 0%));
+  }
+  input[type=range]::-moz-range-track {
     height: 4px;
     border-radius: 2px;
     background: rgba(255,255,255,0.12);
-    outline: none;
-    cursor: pointer;
-    transition: height 0.15s;
   }
-  input[type=range]:hover { height: 6px; }
   input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 14px; height: 14px;
+    appearance: none;
+    width: 16px; height: 16px;
     border-radius: 50%;
     background: var(--accent1);
     box-shadow: 0 0 8px var(--accent1);
     cursor: pointer;
+    margin-top: -6px;
     transition: transform 0.15s;
   }
-  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
-  input[type=range]::-webkit-slider-runnable-track {
-    background: linear-gradient(to right, var(--accent1) var(--prog, 0%), rgba(255,255,255,0.12) var(--prog, 0%));
-    border-radius: 2px;
-    height: 4px;
+  input[type=range]::-moz-range-thumb {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent1);
+    box-shadow: 0 0 8px var(--accent1);
+    border: none;
+    cursor: pointer;
   }
+  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
 
   /* ── 再生ボタン群 ── */
   .controls-row {
@@ -559,6 +577,10 @@
         <div class="slider-label">🎬 動画音量 <span id="bg-vol-val">30%</span></div>
         <input type="range" id="bg-vol" min="0" max="100" value="30">
       </div>
+      <div class="slider-group">
+        <div class="slider-label">💡 透明度 <span id="bg-opacity-val">45%</span></div>
+        <input type="range" id="bg-opacity" min="0" max="100" value="45">
+      </div>
     </div>
 
   </div><!-- /player-panel -->
@@ -644,10 +666,12 @@ const volVal     = document.getElementById('vol-val');
 const speedCtrl  = document.getElementById('speed-ctrl');
 const speedVal   = document.getElementById('speed-val');
 
-const bgSelect   = document.getElementById('bg-select');
-const bgMuteBtn  = document.getElementById('bg-mute-btn');
-const bgVolSlider= document.getElementById('bg-vol');
-const bgVolVal   = document.getElementById('bg-vol-val');
+const bgSelect      = document.getElementById('bg-select');
+const bgMuteBtn     = document.getElementById('bg-mute-btn');
+const bgVolSlider   = document.getElementById('bg-vol');
+const bgVolVal      = document.getElementById('bg-vol-val');
+const bgOpacity     = document.getElementById('bg-opacity');
+const bgOpacityVal  = document.getElementById('bg-opacity-val');
 
 const playlistUl = document.getElementById('playlist-ul');
 const favoritesUl= document.getElementById('favorites-ul');
@@ -735,6 +759,12 @@ bgVolSlider.addEventListener('input', () => {
   if (!state.bgMuted) bgVideo.volume = bgVolSlider.value / 100;
 });
 
+bgOpacity.addEventListener('input', () => {
+  const val = bgOpacity.value / 100;
+  bgVideo.style.opacity = val;
+  bgOpacityVal.textContent = bgOpacity.value + '%';
+});
+
 // ══════════════════════════════════════════════
 //  プレイリスト描画
 // ══════════════════════════════════════════════
@@ -792,12 +822,32 @@ function playTrack(idx) {
   if (idx < 0 || idx >= state.playlist.length) return;
   state.currentIndex = idx;
   const track = state.playlist[idx];
+
+  // Web Audio APIの二重初期化を防ぐため先に初期化してからsrcをセット
+  if (!vizReady) {
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+      source = audioCtx.createMediaElementSource(audio);
+      source.connect(analyser);
+      analyser.connect(audioCtx.destination);
+      vizReady = true;
+      if (animId) cancelAnimationFrame(animId);
+      drawViz();
+    } catch(e) {
+      console.warn('Web Audio API 初期化エラー:', e);
+    }
+  }
+
   audio.src = track.file;
+  audio.load();
   audio.play().then(() => {
     state.isPlaying = true;
     updatePlayBtn();
-    resumeAudioCtx();
-  }).catch(e => console.warn(e));
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  }).catch(e => console.warn('再生エラー:', e));
+
   trackTitle.textContent  = track.title;
   trackArtist.textContent = track.artist;
   renderLists();
@@ -951,22 +1001,8 @@ function resizeCanvas() {
 }
 
 function resumeAudioCtx() {
-  if (vizReady) {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    return;
-  }
-  try {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 256;
-    source = audioCtx.createMediaElementSource(audio);
-    source.connect(analyser);
-    analyser.connect(audioCtx.destination);
-    vizReady = true;
-    if (animId) cancelAnimationFrame(animId);
-    drawViz();
-  } catch(e) {
-    console.warn('Web Audio API 初期化エラー:', e);
+  if (vizReady && audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
   }
 }
 

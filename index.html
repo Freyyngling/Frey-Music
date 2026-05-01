@@ -367,8 +367,8 @@
   }
 
   .panel-title {
-    font-size: 0.60rem;
-    letter-spacing: 0.18em;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
     font-family: 'Orbitron', sans-serif;
   }
@@ -382,37 +382,44 @@
 
   .mini-btn {
     background: none;
-    border: none;
+    border: 1px solid var(--glass-border);
     color: var(--text-dim);
     cursor: pointer;
-    font-size: 0.85rem;
-    padding: 2px 4px;
-    border-radius: 4px;
-    transition: color 0.2s;
+    font-size: 1.0rem;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+    min-width: 38px;
+    text-align: center;
   }
-  .mini-btn:hover { color: var(--accent1); }
-  .mini-btn.active { color: var(--accent1); }
+  .mini-btn:hover { color: var(--accent1); border-color: var(--accent1); background: rgba(0,240,255,0.06); }
+  .mini-btn.active { color: var(--accent1); border-color: var(--accent1); background: rgba(0,240,255,0.08); }
 
   .track-list {
     list-style: none;
-    overflow-y: auto;
+    overflow-y: scroll;
     flex: 1;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.1) transparent;
+    min-height: 0;
+    scrollbar-width: auto;
+    scrollbar-color: rgba(0,240,255,0.3) rgba(255,255,255,0.05);
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
-  .track-list::-webkit-scrollbar { width: 4px; }
-  .track-list::-webkit-scrollbar-track { background: transparent; }
-  .track-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+  .track-list::-webkit-scrollbar { width: 6px; }
+  .track-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 3px; }
+  .track-list::-webkit-scrollbar-thumb { background: rgba(0,240,255,0.35); border-radius: 3px; }
+  .track-list::-webkit-scrollbar-thumb:hover { background: rgba(0,240,255,0.6); }
 
   .track-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 4px;
-    border-radius: 8px;
+    gap: 10px;
+    padding: 10px 8px;
+    border-radius: 10px;
     cursor: pointer;
     transition: background 0.15s;
     touch-action: none;
+    min-height: 48px;
   }
   .track-item:hover { background: rgba(255,255,255,0.06); }
   .track-item.active { background: rgba(0,240,255,0.08); }
@@ -426,22 +433,25 @@
   }
 
   .drag-handle {
-    color: var(--text-dim);
-    font-size: 0.85rem;
+    color: rgba(0,240,255,0.45);
+    font-size: 1.3rem;
     cursor: grab;
-    padding: 0 2px;
+    padding: 4px 6px;
     flex-shrink: 0;
-    opacity: 0;
-    transition: opacity 0.2s;
+    opacity: 0.6;
+    transition: opacity 0.2s, color 0.2s;
+    min-width: 32px;
+    text-align: center;
+    line-height: 1;
   }
-  .track-item:hover .drag-handle { opacity: 1; }
-  .drag-handle:active { cursor: grabbing; }
+  .track-item:hover .drag-handle { opacity: 1; color: var(--accent1); }
+  .drag-handle:active { cursor: grabbing; color: var(--accent3); }
 
   .track-num {
-    font-size: 0.62rem;
+    font-size: 0.70rem;
     color: var(--text-dim);
     font-family: 'Orbitron', sans-serif;
-    width: 16px;
+    width: 20px;
     text-align: center;
     flex-shrink: 0;
   }
@@ -449,15 +459,16 @@
 
   .track-info { flex: 1; min-width: 0; }
   .track-name {
-    font-size: 0.78rem;
+    font-size: 0.88rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     color: var(--text);
   }
   .track-artist-small {
-    font-size: 0.65rem;
+    font-size: 0.72rem;
     color: var(--text-dim);
+    margin-top: 2px;
   }
 
   .fav-btn {
@@ -465,10 +476,12 @@
     border: none;
     color: var(--text-dim);
     cursor: pointer;
-    font-size: 0.85rem;
-    padding: 2px;
+    font-size: 1.1rem;
+    padding: 6px 8px;
     flex-shrink: 0;
     transition: color 0.2s, transform 0.15s;
+    min-width: 36px;
+    text-align: center;
   }
   .fav-btn:hover { transform: scale(1.2); }
   .fav-btn.favorited { color: var(--accent3); }

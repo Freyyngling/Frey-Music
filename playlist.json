@@ -1,68 +1,68 @@
 [
   {
-    "title": "San_Set 1",
+    "title": "San_Set",
     "artist": "freyer",
-    "file": "music/song1.mp3",
+    "file": "music/San_Set.mp3",
     "favorite": false
   },
   {
-    "title": "Afternoon time in the fields 2",
+    "title": "Afternoon time in the fields",
     "artist": "freyer",
-    "file": "music/song2.mp3",
+    "file": "music/Afternoon time in the fields.mp3",
     "favorite": false
   },
   {
-    "title": "Vitamin Highway 3",
+    "title": "Vitamin Highway",
     "artist": "freyer",
-    "file": "music/song3.mp3",
+    "file": "music/Vitamin Highway.mp3",
     "favorite": true
   },
   {
-    "title": "Ultramarine Resonance 4",
+    "title": "Ultramarine Resonance",
     "artist": "freyer",
-    "file": "music/song4.mp3",
+    "file": "music/Ultramarine Resonance.mp3",
     "favorite": true
   },
   {
-    "title": "A dramatic comeback 5",
+    "title": "A dramatic comeback",
     "artist": "freyer",
-    "file": "music/song5.mp3",
+    "file": "music/A dramatic comeback.mp3",
     "favorite": true
   },
   {
-    "title": "The light of the margins 6",
+    "title": "The light of the margins",
     "artist": "freyer",
-    "file": "music/song6.mp3",
+    "file": "music/The light of the margins.mp3",
     "favorite": true
   },
   {
-    "title": "Small chair 7",
+    "title": "Small chair",
     "artist": "freyer",
-    "file": "music/song7.mp3",
+    "file": "music/Small chair.mp3",
     "favorite": true
   },
   {
-    "title": "The Prayer of the Seed 8",
+    "title": "The Prayer of the Seed",
     "artist": "freyer",
-    "file": "music/song8.mp3",
+    "file": "music/The Prayer of the Seed.mp3",
     "favorite": true
   },
   {
-    "title": "Dreaming Seeds 9",
+    "title": "Dreaming Seeds",
     "artist": "freyer",
-    "file": "music/song9.mp3",
+    "file": "music/Dreaming Seeds.mp3",
     "favorite": true
   },
   {
-    "title": "Horizon 10",
+    "title": "Horizon",
     "artist": "freyer",
-    "file": "music/song10.mp3",
+    "file": "music/Horizon.mp3",
     "favorite": true
   },
   {
-    "title": "The Comet's Journey 11",
+    "title": "The Comet's Journey",
     "artist": "freyer",
-    "file": "music/song11.mp3",
+    "file": "music/The Comet's Journey.mp3",
     "favorite": true
   }
 ]

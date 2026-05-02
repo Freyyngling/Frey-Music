@@ -403,7 +403,8 @@
     scrollbar-width: auto;
     scrollbar-color: rgba(0,240,255,0.3) rgba(255,255,255,0.05);
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
   }
   .track-list::-webkit-scrollbar { width: 6px; }
   .track-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 3px; }
@@ -418,7 +419,7 @@
     border-radius: 10px;
     cursor: pointer;
     transition: background 0.15s;
-    touch-action: none;
+    touch-action: pan-y;
     min-height: 48px;
   }
   .track-item:hover { background: rgba(255,255,255,0.06); }
@@ -443,6 +444,7 @@
     min-width: 32px;
     text-align: center;
     line-height: 1;
+    touch-action: none;
   }
   .track-item:hover .drag-handle { opacity: 1; color: var(--accent1); }
   .drag-handle:active { cursor: grabbing; color: var(--accent3); }
@@ -869,28 +871,23 @@ function makeTrackItem(track, realIdx, pos, listType, draggable) {
 
 // ══════════════════════════════════════════════
 //  ドラッグ＆ドロップ（お気に入り並び替え）
+//  ※ ハンドル(⠿)を掴んだ時だけドラッグ、それ以外はリスト普通にスクロール
 // ══════════════════════════════════════════════
 let dragSrc = null;
-let longPressTimer = null;
 let isDraggingFav = false;
+let dragStartY = 0;
+let dragHandleActive = false;
 
 function setupDrag(li, ul) {
-  // デスクトップ：drag handle からのみドラッグ開始
   li.setAttribute('draggable', 'false');
 
   const handle = li.querySelector('.drag-handle');
-  if (handle) {
-    handle.addEventListener('mousedown', () => {
-      li.setAttribute('draggable', 'true');
-    });
-    handle.addEventListener('touchstart', (e) => {
-      longPressTimer = setTimeout(() => {
-        isDraggingFav = true;
-        li.classList.add('dragging');
-        dragSrc = li;
-      }, 400);
-    }, { passive: true });
-  }
+  if (!handle) return;
+
+  // ── デスクトップ: ハンドルからのみドラッグ許可 ──
+  handle.addEventListener('mousedown', () => {
+    li.setAttribute('draggable', 'true');
+  });
 
   li.addEventListener('dragstart', (e) => {
     dragSrc = li;
@@ -922,10 +919,22 @@ function setupDrag(li, ul) {
     renderFavList();
   });
 
-  // タッチ操作（長押し後スワイプ）
-  li.addEventListener('touchmove', (e) => {
-    clearTimeout(longPressTimer);
-    if (!isDraggingFav || dragSrc !== li) return;
+  // ── タッチ: ハンドルを触った時だけドラッグモード ──
+  handle.addEventListener('touchstart', (e) => {
+    dragHandleActive = true;
+    isDraggingFav = false;
+    dragSrc = li;
+    dragStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  handle.addEventListener('touchmove', (e) => {
+    if (!dragHandleActive) return;
+    // スクロールではなくドラッグと判断
+    if (!isDraggingFav) {
+      isDraggingFav = true;
+      li.classList.add('dragging');
+    }
+    // リストのスクロールを止める（ドラッグ中のみ）
     e.preventDefault();
     const touch = e.touches[0];
     const target = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -934,25 +943,27 @@ function setupDrag(li, ul) {
     if (targetLi && targetLi !== li) targetLi.classList.add('drag-over');
   }, { passive: false });
 
-  li.addEventListener('touchend', (e) => {
-    clearTimeout(longPressTimer);
-    if (!isDraggingFav || dragSrc !== li) { isDraggingFav = false; return; }
-    const touch = e.changedTouches[0];
-    const target = document.elementFromPoint(touch.clientX, touch.clientY);
-    const targetLi = target ? target.closest('.track-item') : null;
-    if (targetLi && targetLi !== li) {
-      const fromPos = parseInt(li.dataset.pos);
-      const toPos   = parseInt(targetLi.dataset.pos);
-      if (!isNaN(fromPos) && !isNaN(toPos)) {
-        const moved = state.favOrder.splice(fromPos, 1)[0];
-        state.favOrder.splice(toPos, 0, moved);
+  handle.addEventListener('touchend', (e) => {
+    if (!dragHandleActive) return;
+    dragHandleActive = false;
+    if (isDraggingFav) {
+      const touch = e.changedTouches[0];
+      const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      const targetLi = target ? target.closest('.track-item') : null;
+      if (targetLi && targetLi !== li) {
+        const fromPos = parseInt(li.dataset.pos);
+        const toPos   = parseInt(targetLi.dataset.pos);
+        if (!isNaN(fromPos) && !isNaN(toPos)) {
+          const moved = state.favOrder.splice(fromPos, 1)[0];
+          state.favOrder.splice(toPos, 0, moved);
+        }
       }
+      li.classList.remove('dragging');
+      ul.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+      isDraggingFav = false;
+      dragSrc = null;
+      renderFavList();
     }
-    li.classList.remove('dragging');
-    ul.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
-    isDraggingFav = false;
-    dragSrc = null;
-    renderFavList();
   });
 }
 
